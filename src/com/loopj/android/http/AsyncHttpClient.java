@@ -40,6 +40,8 @@ import org.apache.http.HttpVersion;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.protocol.ClientContext;
@@ -157,6 +159,39 @@ public class AsyncHttpClient {
 
         // Fire up the request in a new thread
         sendRequest(httpClient, httpContext, new HttpGet(url), responseHandler, context);
+    }
+
+    public void put(String url, AsyncHttpResponseHandler responseHandler) {
+        put(null, url, null, responseHandler);
+    }
+
+    public void put(Context context, String url, AsyncHttpResponseHandler responseHandler) {
+        put(context, url, null, responseHandler);
+    }
+
+    public void put(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
+        put(null, params, responseHandler);
+    }
+
+    public void put(Context context, String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
+        final HttpPut put = new HttpPut(url);
+        if(params != null) {
+            HttpEntity entity = params.getEntity();
+            if(entity != null) {
+                put.setEntity(entity);
+            }
+        }
+
+        sendRequest(httpClient, httpContext, put, responseHandler, context);
+    }
+
+    public void delete(String url, AsyncHttpResponseHandler responseHandler) {
+        delete(null, url, responseHandler);
+    }
+
+    public void delete(Context context, String url, AsyncHttpResponseHandler responseHandler) {
+        final HttpDelete delete = new HttpDelete(url);
+        sendRequest(httpClient, httpContext, delete, responseHandler, context);
     }
 
     public void post(String url, AsyncHttpResponseHandler responseHandler) {
